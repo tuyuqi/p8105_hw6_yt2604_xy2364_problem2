@@ -3,7 +3,7 @@ title: "hw6_p2"
 author: "Yuqi Tu and Xin Yin"
 output: 
   flexdashboard::flex_dashboard:
-    orientation: row
+    orientation: column
     source_code: embed
 runtime: shiny
 ---
@@ -55,28 +55,7 @@ Column {.sidebar}
 -----------------------------------------------------------------------
 
 ```{r slider input widget}
-
-hours = instacart %>% distinct(order_hour_of_day) %>% pull()
-
-# selectInput widget
-selectInput("order_hour_of_day_choice", label = h3("Select Order Hour of Day"),
-            choices = hours)
-
-
-
-hr()
-
-
-departments = instacart %>% distinct(department) %>% pull()
-
-# selectInput widget
-selectInput("department_choice", label = h3("Select Department"),
-            choices = departments)
-
-hr()
-
 ## sliderInput widget
-# set min and max price based on boro choice
 renderUI({
   max_number_of_item_ordered = 
     department_items_ordered_data %>%
@@ -97,31 +76,17 @@ sliderInput("number_of_item_ordered_range", label = h3("Choose the number of ord
 
 hr()
 
-## sliderInput widget
-# set min and max price based on boro choice
-renderUI({
-  max_order_hour_of_day = 
-    aisle_tidy_data %>%
-    select(order_hour_of_day) %>% 
-    distinct(order_hour_of_day) %>% 
-    max() %>% 
-    as.numeric()
-  
-  min_order_hour_of_day = 
-    aisle_tidy_data %>%
-    select(order_hour_of_day) %>% 
-    distinct(order_hour_of_day) %>% 
-    min() %>% 
-    as.numeric()
-  
-sliderInput("order_hour_of_day_range", label = h3("Choose the Order Hour of Day range"), min = min_order_hour_of_day, max = max_order_hour_of_day, value = c(0, 1359))
+order_hours = instacart %>% arrange(order_hour_of_day) %>% distinct(order_hour_of_day) %>% pull()
 
-})
+# selectInput widget
+selectInput("order_hour_choice", label = h3("Select the order hour of day"),
+            choices = order_hours)
 
+            
 ```
 
 
-Row
+Column
 -----------------------------------------------------------------------
 
 ### Chart A
@@ -136,11 +101,7 @@ renderPlotly({
     layout(title = "The Number of Items Ordered within Each Department", showlegend = T,
          xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE), 
          yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-<<<<<<< HEAD
 
-=======
->>>>>>> 68befcae46a300b1b5077f77c63876d8400a35f4
-    
   
 })
 
@@ -149,12 +110,23 @@ renderPlotly({
 
 
 
-Row {.tabset .tabset-fade}
+Column {.tabset}
 -----------------------------------------------------------------------
 
 ### Chart B
 
 ```{r}
+renderPlotly({
+  fit <- density(household_data$order_hour_of_day)
+  household_plot =
+  household_data %>%
+  plot_ly(x = ~order_hour_of_day, type = "histogram", name = "Frequency") %>%
+  add_trace(x = fit$x, y = fit$y, type= "scatter", mode = "lines", fill = "tozeroy", yaxis = "y2", name = "Density") %>%
+  layout(yaxis2 = list(overlaying = "y", side = "right")) %>%
+  layout(title = "The Hour of the Day on which the Order was placed for Household Department",
+         xaxis = list(title = "Order hour of the day"), 
+         yaxis = list(title = "Frequency"))
+})
 
 ```
 
@@ -163,7 +135,7 @@ Row {.tabset .tabset-fade}
 ```{r}
 renderPlotly({
   aisle_tidy_data %>%
-    filter(order_hour_of_day == input$order_hour_of_day_choice) %>% 
+    filter(order_hour_of_day == input$order_hour_choice) %>% 
     plot_ly(x = ~order_hour_of_day, y = ~n, 
           split = ~aisle, type = 'scatter', mode = 'lines') %>%
   layout(title = "The Association of Order Hour and Frequency for Different Aisles",
