@@ -18,6 +18,7 @@ library(viridis)
 library(plotly)
 library(flexdashboard)
 library(shiny)
+library(rsconnect)
 ```
 
 
