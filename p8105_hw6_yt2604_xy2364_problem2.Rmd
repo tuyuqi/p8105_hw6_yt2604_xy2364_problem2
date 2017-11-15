@@ -1,0 +1,92 @@
+---
+title: "p8105_hw6_yt2604_xy2364_problem2"
+author: "Yuqi Tu and Xin Yin"
+date: "November 14, 2017"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: row
+    source_code: embed
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(tidytext)
+library(rvest)
+library(httr)
+library(haven)
+library(janitor)
+library(rnoaa)
+library(stringr)
+library(forcats)
+library(viridis)
+library(plotly)
+library(flexdashboard)
+library(shiny)
+```
+
+
+```{r read and load data, message= FALSE, warning= FALSE}
+instacart = read_csv("./data_hw6/instacart_train_data.csv.zip") %>%
+    clean_names()
+```
+
+
+
+```{r department donut chart analysis}
+department_items_ordered = summarize(group_by(instacart, department),n=n()) %>% 
+  arrange(desc(n)) %>% 
+  rename(number_of_item_ordered = n)
+
+
+```
+
+
+
+```{r data analysis order hour for items from the household department}
+household = 
+  filter(instacart,department == "household") %>%
+  select(department, order_hour_of_day) %>%
+  arrange(order_hour_of_day)
+```
+
+
+```{r analysis c}
+
+```
+
+
+
+
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+
+```{r}
+
+```
+
+
+Row
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+
+```
+
+Row {.tabset .tabset-fade}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+
+```
+
+### Chart C
+
+```{r}
+
+```

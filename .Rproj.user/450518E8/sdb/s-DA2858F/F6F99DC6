@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"p8105_hw6_yt2604_xy2364_problem2\"\nauthor: \"Yuqi Tu and Xin Yin\"\ndate: \"November 14, 2017\"\noutput: \n  flexdashboard::flex_dashboard:\n    orientation: row\n    source_code: embed\nruntime: shiny\n---\n\n```{r setup, include=FALSE}\nlibrary(tidyverse)\nlibrary(tidytext)\nlibrary(rvest)\nlibrary(httr)\nlibrary(haven)\nlibrary(janitor)\nlibrary(rnoaa)\nlibrary(stringr)\nlibrary(forcats)\nlibrary(viridis)\nlibrary(plotly)\nlibrary(flexdashboard)\nlibrary(shiny)\n```\n\n\n```{r read and load data, message= FALSE, warning= FALSE}\ninstacart = read_csv(\"./data_hw6/instacart_train_data.csv.zip\") %>%\n    clean_names()\n```\n\n\n\n```{r department donut chart analysis}\ndepartment_items_ordered = summarize(group_by(instacart, department),n=n()) %>% \n  arrange(desc(n)) %>% \n  rename(number_of_item_ordered = n)\n\n\n```\n\n\n\n```{r data analysis order hour for items from the household department}\nhousehold = \n  filter(instacart,department == \"household\") %>%\n  select(department, order_hour_of_day) %>%\n  arrange(order_hour_of_day)\n```\n\n\n```{r analysis c}\n\n```\n\n\n\n\n\nColumn {.sidebar}\n-----------------------------------------------------------------------\n\n```{r}\n\n```\n\n\nRow\n-----------------------------------------------------------------------\n\n### Chart A\n\n```{r}\n\n```\n\nRow {.tabset .tabset-fade}\n-----------------------------------------------------------------------\n\n### Chart B\n\n```{r}\n\n```\n\n### Chart C\n\n```{r}\n\n```",
+    "created" : 1510715081170.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "368395628",
+    "id" : "F6F99DC6",
+    "lastKnownWriteTime" : 1510716216,
+    "last_content_update" : 1510716216323,
+    "path" : "~/Documents/Columbia University/BISTP8105 Data Science/p8105_hw6_yt2604_xy2364_problem2/p8105_hw6_yt2604_xy2364_problem2.Rmd",
+    "project_path" : "p8105_hw6_yt2604_xy2364_problem2.Rmd",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
