@@ -1,5 +1,5 @@
 ---
-title: "p8105_hw6_yt2604_xy2364_problem2"
+title: "hw6_p2"
 author: "Yuqi Tu and Xin Yin"
 output: 
   flexdashboard::flex_dashboard:
@@ -8,10 +8,9 @@ output:
 runtime: shiny
 ---
 
+
 ```{r setup, include=FALSE}
 library(tidyverse)
-library(tidytext)
-library(rvest)
 library(janitor)
 library(stringr)
 library(forcats)
@@ -27,6 +26,29 @@ instacart = read_csv("./data_hw6/instacart_train_data.csv.zip") %>%
     clean_names()
 ```
 
+```{r department donut chart analysis}
+department_items_ordered_data = summarize(group_by(instacart, department),n = n()) %>% 
+  arrange(desc(n)) %>% 
+  rename(number_of_item_ordered = n)
+
+```
+
+```{r data analysis order hour for items from the household department}
+household_data = 
+  filter(instacart,department == "household") %>%
+  select(department, order_hour_of_day) %>%
+  arrange(order_hour_of_day)
+```
+
+
+```{r analysis c}
+aisle_tidy_data =
+  instacart %>%
+  select(aisle, order_hour_of_day, department) %>%
+  group_by(aisle, order_hour_of_day) %>%
+  summarize(n = n()) %>%
+  ungroup()
+```
 
 
 Column {.sidebar}
@@ -34,34 +56,67 @@ Column {.sidebar}
 
 ```{r slider input widget}
 
+hours = instacart %>% distinct(order_hour_of_day) %>% pull()
+
+# selectInput widget
+selectInput("order_hour_of_day_choice", label = h3("Select Order Hour of Day"),
+            choices = hours)
+
+
+
+hr()
+
+
 departments = instacart %>% distinct(department) %>% pull()
 
 # selectInput widget
-selectInput("department_choice", label = h3("Select department"),
+selectInput("department_choice", label = h3("Select Department"),
             choices = departments)
 
 hr()
+
 ## sliderInput widget
 # set min and max price based on boro choice
+renderUI({
   max_number_of_item_ordered = 
-    summarize(group_by(instacart,department),n=n()) %>%
-    rename(number_of_item_ordered = n) %>%
+    department_items_ordered_data %>%
     select(number_of_item_ordered) %>% 
     distinct(number_of_item_ordered) %>% 
     max() %>% 
     as.numeric()
   
   min_number_of_item_ordered = 
-    summarize(group_by(instacart,department),n=n()) %>%
-    rename(number_of_item_ordered = n) %>%
+    department_items_ordered_data %>%
     select(number_of_item_ordered) %>% 
     distinct(number_of_item_ordered) %>% 
     min() %>% 
     as.numeric()
   
-sliderInput("number_of_item_ordered_range", label = h3("Choose the number of ordered items range"), min = min_number_of_item_ordered, 
-        max = max_number_of_item_ordered, value = c(1359, 409087))
+sliderInput("number_of_item_ordered_range", label = h3("Choose the number of ordered  items range"), min = min_number_of_item_ordered, max = max_number_of_item_ordered, value = c(1359, 409087))
+})
 
+hr()
+
+## sliderInput widget
+# set min and max price based on boro choice
+renderUI({
+  max_order_hour_of_day = 
+    aisle_tidy_data %>%
+    select(order_hour_of_day) %>% 
+    distinct(order_hour_of_day) %>% 
+    max() %>% 
+    as.numeric()
+  
+  min_order_hour_of_day = 
+    aisle_tidy_data %>%
+    select(order_hour_of_day) %>% 
+    distinct(order_hour_of_day) %>% 
+    min() %>% 
+    as.numeric()
+  
+sliderInput("order_hour_of_day_range", label = h3("Choose the Order Hour of Day range"), min = min_order_hour_of_day, max = max_order_hour_of_day, value = c(0, 1359))
+
+})
 
 ```
 
@@ -69,25 +124,26 @@ sliderInput("number_of_item_ordered_range", label = h3("Choose the number of ord
 Row
 -----------------------------------------------------------------------
 
-### The Number of Items Ordered within Each Department
+### Chart A
 
 ```{r}
 renderPlotly({
-    summarize(group_by(instacart,department),n=n()) %>% 
-    arrange(desc(n)) %>% 
-    rename(number_of_item_ordered = n) %>% 
+    department_items_ordered_data %>% 
     filter(number_of_item_ordered %in% input$number_of_item_ordered_range[1]:input$number_of_item_ordered_range[2]) %>%
     mutate(text_label = str_c("Number of Items Ordered:", number_of_item_ordered)) %>%
-  plot_ly(labels = ~department, values = ~number_of_item_ordered) %>% 
-  add_pie(hole = 0.4) %>% 
-  layout(title = "The Number of Items Ordered within Each Department", showlegend = T,
+    plot_ly(labels = ~department, values = ~number_of_item_ordered) %>% 
+    add_pie(hole = 0.4) %>% 
+    layout(title = "The Number of Items Ordered within Each Department", showlegend = T,
          xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE), 
          yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-donut_chart
     
   
 })
+
+
 ```
+
+
 
 Row {.tabset .tabset-fade}
 -----------------------------------------------------------------------
@@ -101,5 +157,17 @@ Row {.tabset .tabset-fade}
 ### Chart C
 
 ```{r}
-
+renderPlotly({
+  aisle_tidy_data %>%
+    filter(order_hour_of_day == input$order_hour_of_day_choice) %>% 
+    plot_ly(x = ~order_hour_of_day, y = ~n, 
+          split = ~aisle, type = 'scatter', mode = 'lines') %>%
+  layout(title = "The Association of Order Hour and Frequency for Different Aisles",
+         xaxis = list(title = "Order hour of day", zeroline = F),
+         yaxis = list(title = "Frequency", zeroline = F))
+})
 ```
+
+
+
+
