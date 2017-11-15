@@ -83,7 +83,7 @@ renderPlotly({
   layout(title = "The Number of Items Ordered within Each Department", showlegend = T,
          xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE), 
          yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-donut_chart
+
     
   
 })
