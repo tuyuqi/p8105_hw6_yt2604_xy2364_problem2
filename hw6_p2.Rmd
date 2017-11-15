@@ -3,7 +3,7 @@ title: "hw6_p2"
 author: "Yuqi Tu and Xin Yin"
 output: 
   flexdashboard::flex_dashboard:
-    orientation: column
+    orientation: row
     source_code: embed
 runtime: shiny
 ---
@@ -54,6 +54,7 @@ aisle_tidy_data =
 Column {.sidebar}
 -----------------------------------------------------------------------
 
+Chart A:
 ```{r slider input widget}
 ## sliderInput widget
 renderUI({
@@ -74,19 +75,22 @@ renderUI({
 sliderInput("number_of_item_ordered_range", label = h3("Choose the number of ordered  items range"), min = min_number_of_item_ordered, max = max_number_of_item_ordered, value = c(1359, 409087))
 })
 
-hr()
+```
 
-order_hours = instacart %>% arrange(order_hour_of_day) %>% distinct(order_hour_of_day) %>% pull()
+Chart C:
+```{r selectinput widget}
+
+aisles = instacart %>% arrange(aisle) %>% distinct(aisle) %>% pull()
 
 # selectInput widget
-selectInput("order_hour_choice", label = h3("Select the order hour of day"),
-            choices = order_hours)
+selectInput("aisle_choice", label = h3("Select aisle"),
+            choices = aisles)
 
             
 ```
 
 
-Column
+Row
 -----------------------------------------------------------------------
 
 ### Chart A
@@ -110,7 +114,7 @@ renderPlotly({
 
 
 
-Column {.tabset}
+Row {.tabset .tabset-fade}
 -----------------------------------------------------------------------
 
 ### Chart B
@@ -135,12 +139,13 @@ renderPlotly({
 ```{r}
 renderPlotly({
   aisle_tidy_data %>%
-    filter(order_hour_of_day == input$order_hour_choice) %>% 
+    filter(aisle == input$aisle_choice) %>% 
     plot_ly(x = ~order_hour_of_day, y = ~n, 
           split = ~aisle, type = 'scatter', mode = 'lines') %>%
-  layout(title = "The Association of Order Hour and Frequency for Different Aisles",
+    layout(title = "The Association of Order Hour and Frequency for Different Aisles",
          xaxis = list(title = "Order hour of day", zeroline = F),
-         yaxis = list(title = "Frequency", zeroline = F))
+         yaxis = list(title = "Frequency", zeroline = F),
+         autosize = TRUE)
 })
 ```
 
