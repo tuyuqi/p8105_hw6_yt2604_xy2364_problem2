@@ -1,6 +1,5 @@
 ---
-title: "hw6_p2"
-author: "Yuqi Tu and Xin Yin"
+title: "Instacart Shiny"
 output: 
   flexdashboard::flex_dashboard:
     orientation: row
