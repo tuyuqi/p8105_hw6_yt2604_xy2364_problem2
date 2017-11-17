@@ -36,7 +36,7 @@ department_items_ordered_data = summarize(group_by(instacart, department),n = n(
 ```{r data analysis order hour for items from the household department}
 household_data = 
   filter(instacart,department == "household") %>%
-  select(department, order_hour_of_day) %>%
+  select(department, order_dow, order_hour_of_day) %>%
   arrange(order_hour_of_day)
 ```
 
@@ -75,6 +75,20 @@ renderUI({
 sliderInput("number_of_item_ordered_range", label = h3("Choose the number of ordered  items range"), min = min_number_of_item_ordered, max = max_number_of_item_ordered, value = c(1359, 409087))
 })
 
+```
+
+Chart B:
+```{r checkboxinput widget}
+
+order_dates = instacart %>%
+  arrange(order_dow) %>% 
+  distinct(order_dow) %>% 
+  pull()
+
+checkboxGroupInput("order_date_choice", label = h3("Select Day"), 
+    choices = order_dates, selected = 1)
+
+            
 ```
 
 Chart C:
@@ -124,10 +138,11 @@ renderPlotly({
   fit <- density(household_data$order_hour_of_day)
   household_plot =
   household_data %>%
-  plot_ly(x = ~order_hour_of_day, type = "histogram", name = "Frequency") %>%
-  add_trace(x = fit$x, y = fit$y, type= "scatter", mode = "lines", fill = "tozeroy", yaxis = "y2", name = "Density") %>%
-  layout(yaxis2 = list(overlaying = "y", side = "right")) %>%
-  layout(title = "The Hour of the Day on which the Order was placed for Household Department",
+    filter(order_dow == input$order_date_choice) %>% 
+    plot_ly(x = ~order_hour_of_day, type = "histogram", name = "Frequency") %>%
+    add_trace(x = fit$x, y = fit$y, type= "scatter", mode = "lines", fill = "tozeroy", yaxis = "y2", name = "Density") %>%
+    layout(yaxis2 = list(overlaying = "y", side = "right")) %>%
+    layout(title = "The Hour of the Day on which the Order was placed for Household Department",
          xaxis = list(title = "Order hour of the day"), 
          yaxis = list(title = "Frequency"))
 })

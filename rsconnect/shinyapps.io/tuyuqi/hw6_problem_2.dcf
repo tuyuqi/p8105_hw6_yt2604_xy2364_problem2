@@ -5,6 +5,6 @@ account: tuyuqi
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 235968
-bundleId: 1077628
+bundleId: 1080318
 url: https://tuyuqi.shinyapps.io/hw6_problem_2/
-when: 1510784278.09609
+when: 1510888357.07999
